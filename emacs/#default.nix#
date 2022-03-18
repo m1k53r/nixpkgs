@@ -7,8 +7,7 @@ let
   in epkgs.overrideScope' cfg.overrides;
 
 in {
-    services.emacs.enable = true;
-    programs.emacs = {
+  programs.emacs = {
     enable = true; 
     #extraConfig = ''
     #  (setq standard-indent 2)
@@ -37,27 +36,12 @@ in {
       epkgs.dashboard
       epkgs.emojify
 
-      # Org
-
-      epkgs.olivetti
-      epkgs."org-roam"
-      epkgs."org-bullets"
-      epkgs."org-appear"
-      epkgs.deft
-      epkgs."org-download"
-      epkgs.typo
-      epkgs."org-beautify-theme"
-      epkgs."evil-org"
-      epkgs."org-super-agenda"
-
       # LSP
 
       epkgs."lsp-mode"
       epkgs."lsp-ui"
       epkgs."lsp-treemacs"
       epkgs."lsp-python-ms"
-      epkgs."lsp-haskell"
-      epkgs.ccls
 
       # Modes
 
@@ -83,13 +67,13 @@ in {
       epkgs."indent-guide"
       epkgs.dimmer
       epkgs."company-box"
+      epkgs."aggressive-indent"
       epkgs."evil-nerd-commenter"
       epkgs."page-break-lines"
       epkgs."git-gutter"
       epkgs."fringe-helper"
       epkgs."git-gutter-fringe"
-      epkgs."smart-mode-line"
-      epkgs."cmake-ide"
+      epkgs.""
     ];
   };
   xdg.configFile."/home/mikolaj/.emacs.d/init.el".source = ./init.el;
