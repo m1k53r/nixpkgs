@@ -92,5 +92,6 @@ in
     (import ./code)
     (import ./rofi)
     (import ./bash)
+    (import ./xmonad)
   ];
 }
