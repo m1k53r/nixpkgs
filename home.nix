@@ -1,5 +1,10 @@
 { config, pkgs ? import <nixpkgs> {}, ... }:
 
+let
+  haskell-env = with pkgs.haskell.packages.ghc8107; [
+    hoogle
+  ];
+in
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -12,22 +17,31 @@
     # LSP
     rnix-lsp
     haskell-language-server
-    rls
     python-language-server
+    pyright
 
+    # Haskell stuff
+    cabal-install
+    cabal2nix
+    stack
+    ghc
+    ghcid
+    ormolu
+
+    # Nix stuff
+    nix-prefetch-git
+
+    # Utils
+    zlib
+    zlib.dev
+    
     # Other stuff
-    htop
     chromium
     gnome3.gucharmap
     dconf
-    ghc
-    haskell-language-server
     python3
-    pyright
     ctags
     ripgrep
-    clang
-    gnumake
     android-studio
     jdk
     android-tools
@@ -36,12 +50,21 @@
     fira-code-symbols
     xclip
     hlint
-    ccls
     bear
-    clang-tools
-    cmake
     discord
-  ];
+    mesa
+    libpng
+    xscreensaver
+    scrot
+    jq
+    rofi
+    papirus-icon-theme
+    ncat
+    tdesktop
+    spotifywm
+    flutter
+    hover
+  ] ++ haskell-env;
 
   nixpkgs.config.allowUnfree = true;
 
@@ -67,5 +90,7 @@
     (import ./git)
     (import ./emacs)
     (import ./code)
+    (import ./rofi)
+    (import ./bash)
   ];
 }

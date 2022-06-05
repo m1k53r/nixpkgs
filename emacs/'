@@ -240,6 +240,14 @@
 
 (require 'dired-x)
 
+;; (use-package eshell-toggle
+;;   :custom
+;;   (eshell-toggle-size-fraction 4)
+;;   (eshell-toggle-use-projectile-root t)
+;;   (eshell-toggle-run-command nil)
+;;   :bind
+;;   ("s-`" . eshell-toggle))
+
 (use-package indent-guide
   :hook
   (prog-mode . indent-guide-mode))
@@ -386,8 +394,7 @@
 
 ;; Assuming usage with dart-mode
 (use-package dart-mode
-  :hook
-  (dart-mode . (lambda () (indent-guide-mode 0)))
+  :hook (dart-mode . (indent-guide-mode nil))
   :custom
   (dart-sdk-path (concat (getenv "HOME") "/flutter/bin/cache/dark-sdk/")
    dart-format-on-save t))

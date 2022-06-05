@@ -1,0 +1,91 @@
+configuration {
+  show-icons:                  true;
+	icon-theme:                  "Papirus";
+  font:                        "JetBrains Mono Nerd Font 11";
+}
+* {
+  bg:                          env(BG, "#000000");
+  bg-alt:                      env(BGALT, "#000000");
+  fg:                          env(FG, "#000000");
+  red:                         env(RED, "#000000");
+  blue:                        env(BLUE, "#000000");
+  green:                       env(GREEN, "#000000");
+  magenta:                     env(MAGENTA, "#000000");
+  border:                      0;
+  padding:                     0;
+  margin:                      0;
+  active-background:           "#000000";
+  normal-background:           var(bg-alt);
+  alternate-normal-background: var(bg-alt);
+  selected-normal-background:  var(fg);
+}
+window {
+  background-color:            var(bg);
+  width:                       30%;
+  border:                      0;
+}
+mainbox {
+  children: [ inputbar,listview,mode-switcher ];
+}
+listview {
+  border:                      1;
+  border-color:                var(red);
+  background-color:            var(bg-alt);
+  lines:                       10;
+  columns:                     3;
+}
+entry {
+  placeholder:                 "What do you want to run?";
+  background-color:            var(fg);
+  text-color:                  var(bg);
+  border-radius:               10px;
+  padding:                     0px 0px 0px 10px;
+}
+element {
+  orientation:                 horizontal;
+  children:                    [ element-icon, element-text ];
+  spacing:                     5px;
+  background-color:            var(bg);
+}
+element-icon {
+  text-color:                  var(fg);
+  background-color:            var(bg-alt);
+  size:                        1em;
+  horizontal-align:            0.5;
+}
+element-text {
+  text-color:                  var(fg);
+  background-color:            var(bg-alt);
+  horizontal-align:            0.5;
+}
+element-icon.selected {
+  text-color:                  var(bg);
+  background-color:            var(fg);
+}
+element-text.selected {
+  text-color:                  var(bg);
+  background-color:            var(fg);
+}
+inputbar {
+  children:                    [textbox-prompt-colon,entry,overlay,case-indicator];
+}
+prompt {
+  text-color:                  var(fg);
+}
+textbox-prompt-colon {
+  margin:                      0px 0.3000em 0.0000em 0.0000em ;
+  expand:                      false;
+  str:                         " ";
+  text-color:                  var(fg);
+}
+button {
+  background-color:           var(red);
+  text-color:                 var(bg);
+}
+button.selected {
+  background-color:           var(fg);
+  text-color:                 var(bg);
+}
+scrollbar{
+  handle-color:               var(fg);
+}

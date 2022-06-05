@@ -14,9 +14,20 @@
             printf "\e]%s\e\\" "$argv"
         end
     end
+    set -gx BG        "#3F3F3F"
+    set -gx BGALT     "#494949"
+    set -gx FG        "#DCDCCC"
+    set -gx RED    	  "#CC9393"
+    set -gx ORANGE 	  "#DFAF8F"
+    set -gx YELLOW 	  "#F0DFAF"
+    set -gx GREEN  	  "#7F9F7F"
+    set -gx CYAN   	  "#93E0E3"
+    set -gx BLUE   	  "#8CD0D3"
+    set -gx MAGENTA	  "#DC8CC3"
     '';
     shellAliases = {
         pkgs = "nix repl \"<nixpkgs>\"";
+        ecli = "emacsclient -c";
     };
   };
 
