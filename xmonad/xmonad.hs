@@ -100,7 +100,8 @@ myLayout = tiled ||| Mirror tiled ||| tab ||| fullSpace ||| full ||| threeCol
 
 myHandleEventHook :: Event -> X All
 myHandleEventHook = dynamicPropertyChange "WM_NAME" $ composeAll
-  [title =? "Spotify"          --> doShift (myWorkspaces !! 2)
+  [ title =? "Spotify"          --> doShift (myWorkspaces !! 2)
+  , title =? "Android Emulator - Pixel_5_API_Tiramisu:5554" --> doFloat
   ]
 
 myWorkspaces = ["1:code", "2:web", "3:spotify", "4:messages", "5:utils"]
@@ -130,5 +131,6 @@ myConfig = def
     , ("M-S-=", unGrab *> spawn "scrot -s"        ) 
     , ("M-]", spawn "firefox"                     ) 
     , ("M-p", spawn "rofi -show run"              )
+    , ("C-M-m", spawn "slock"                     )
     ]
 

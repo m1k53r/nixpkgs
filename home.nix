@@ -11,12 +11,13 @@ in
   home.username = "mikolaj";
   home.homeDirectory = "/home/mikolaj";
 
+  fonts.fontconfig.enable = true;
+
   nixpkgs.overlays = [(self: super: { discord = super.discord.overrideAttrs (_: { src = builtins.fetchTarball https://discord.com/api/download?platform=linux&format=tar.gz; });})];
 
   home.packages = with pkgs; [
     # LSP
     rnix-lsp
-    haskell-language-server
     python-language-server
     pyright
 
@@ -34,6 +35,12 @@ in
     # Utils
     zlib
     zlib.dev
+
+    # Fonts
+    jetbrains-mono
+    iosevka
+    nerdfonts
+    nerd-font-patcher
     
     # Other stuff
     chromium
@@ -59,11 +66,16 @@ in
     jq
     rofi
     papirus-icon-theme
-    ncat
+    nmap
     tdesktop
     spotifywm
     flutter
     hover
+    xmobar
+    slock
+    picom
+    alacritty
+    spotify
   ] ++ haskell-env;
 
   nixpkgs.config.allowUnfree = true;
@@ -93,5 +105,6 @@ in
     (import ./rofi)
     (import ./bash)
     (import ./xmonad)
+    (import ./picom)
   ];
 }
