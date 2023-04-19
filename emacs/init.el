@@ -10,7 +10,17 @@
   :config
   (evil-mode 1))
 ;; Load a custom theme
-(load-theme 'darkburn t)
+;;(load-theme 'darkburn t)
+(if (daemonp)
+    (add-hook 'after-make-frame-functions
+              (defun my/theme-init-daemon (frame)
+                (with-selected-frame frame
+                  (load-theme 'nord t))
+                ;; Run this hook only once.
+                (remove-hook 'after-make-frame-functions
+                             #'my/theme-init-daemon)
+                (fmakunbound 'my/theme-init-daemon)))
+  (load-theme 'nord t))
 (winner-mode 1)
 
 (setq backup-directory-alist '((".*" . "~/.backup")))
@@ -81,17 +91,28 @@
 ;; Auto completion
 (use-package company
   :config
-  (setq company-idle-delay 0
+  (setq company-idle-delay 0.5
         company-minimum-prefix-length 2
         company-selection-wrap-around t))
 (global-company-mode)
 
 ;; LSP
-
 (use-package lsp-haskell)
 
 (use-package lsp-mode
   :init
+  :custom
+  (lsp-rust-analyzer-cargo-watch-command "clippy")
+  (lsp-eldoc-render-all t)
+  (lsp-idle-delay 0.6)
+  ;; enable / disable the hints as you prefer:
+  (lsp-rust-analyzer-server-display-inlay-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+  (lsp-rust-analyzer-display-chaining-hints t)
+  (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+  (lsp-rust-analyzer-display-closure-return-type-hints t)
+  (lsp-rust-analyzer-display-parameter-hints nil)
+  (lsp-rust-analyzer-display-reborrow-hints nil)
   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-l")
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
@@ -103,15 +124,27 @@
          (web-mode . lsp)
          (c++-mode . lsp)
          (dart-mode . lsp)
+         (elixir-mode . lsp)
+         (tuareg-mode . lsp)
+         (rustic-mode . lsp)
          ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
+         (lsp-mode . lsp-enable-which-key-integration)
+         (lsp-mode . lsp-ui-mode))
   :commands lsp)
 
 ;; optionally
-(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :custom
+  (lsp-ui-peek-always-show t)
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-doc-enable nil))
 
 (use-package nix-mode
   :mode ("\\.nix\\'" "\\.nix.in\\'"))
+
+(use-package elixir-mode
+  :mode ("\\.ex\\'" "\\.exs\\'"))
 
 (use-package haskell-mode
   :mode ("\\.hs\\'")
@@ -119,7 +152,6 @@
   (require 'haskell-interactive-mode)
   (require 'haskell-process)
   :hook
-  (haskell-mode . haskell-auto-insert-module-template)
   (haskell-mode . haskell-collapse-mode))
 
 (use-package company-capf)
@@ -153,7 +185,9 @@
          (before-save . tide-format-before-save)))
 
 (use-package web-mode
-  :mode (("\\.tsx\\'" . web-mode))
+  :mode
+  (("\\.tsx\\'" . web-mode)
+   ("\\.tpl\\'" . web-mode))
   :hook ((web-mode . (lambda ()
                        (when (string-equal "tsx" (file-name-extension buffer-file-name))
                          (tide-setup)))))
@@ -177,14 +211,16 @@
   (setq centaur-tabs-set-icons t)
   (setq centaur-tabs-style "bar")
   :custom-face
-  (centaur-tabs-selected
-   ((t (:background "#3F3F3F" :foreground "#DCDCCC"))))
-  (centaur-tabs-unselected
-   ((t (:background "#2B2B2B" :foreground "#656555"))))
-  (centaur-tabs-selected-modified
-   ((t (:background "#3F3F3F" :foreground "#F0DFAF"))))
-  (centaur-tabs-unselected-modified
-   ((t (:background "#2B2B2B" :foreground "#F0DFAF"))))
+  (centaur-tabs-default
+   ((t (:background "#4C566A" :foreground "#ECEFF4"))))
+  ;; (centaur-tabs-selected
+  ;;  ((t (:background "#3F3F3F" :foreground "#DCDCCC"))))
+  ;; (centaur-tabs-unselected
+  ;;  ((t (:background "#2B2B2B" :foreground "#656555"))))
+  ;; (centaur-tabs-selected-modified
+  ;;  ((t (:background "#3F3F3F" :foreground "#F0DFAF"))))
+  ;; (centaur-tabs-unselected-modified
+  ;;  ((t (:background "#2B2B2B" :foreground "#F0DFAF"))))
   :bind
   ("C-<prior>" . centaur-tabs-backward)
   ("C-<next>" . centaur-tabs-forward)
@@ -193,7 +229,13 @@
         ("g T" . centaur-tabs-backward)))
 
 (use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode))
+  ;; :hook (dired-mode . all-the-icons-dired-mode)
+  :config
+  (setq all-the-icons-dired-monochrome nil))
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :config (treemacs-icons-dired-mode))
 
 (add-hook 'prog-mode-hook #'(lambda () (hs-minor-mode t)))
 
@@ -270,6 +312,8 @@
 
 (use-package smart-mode-line
   :init
+  (setq sml/no-confirm-load-theme t)
+  (setq sml/theme 'respectful)
   (sml/setup))
 
 (use-package org
@@ -399,11 +443,44 @@
                                                (window-width . 35)))
   (lsp-treemacs-sync-mode 1))
 
-(use-package treemacs
+(use-package treemacs)
+
+(use-package merlin
   :config
-  (progn
-    (setq
-     treemacs-position 'right)))
+  (custom-set-variables '(merlin-command "ocamlmerlin"))
+  :hook
+  (tuareg-mode . merlin-mode))
+
+(use-package ocp-indent)
+
+(use-package rustic
+  :ensure
+  :bind (:map rustic-mode-map
+              ("M-j" . lsp-ui-imenu)
+              ("M-?" . lsp-find-references)
+              ("C-c C-c l" . flycheck-list-errors)
+              ("C-c C-c a" . lsp-execute-code-action)
+              ("C-c C-c r" . lsp-rename)
+              ("C-c C-c q" . lsp-workspace-restart)
+              ("C-c C-c Q" . lsp-workspace-shutdown)
+              ("C-c C-c s" . lsp-rust-analyzer-status))
+  :config
+  ;; uncomment for less flashiness
+  ;; (setq lsp-eldoc-hook nil)
+  ;; (setq lsp-enable-symbol-highlighting nil)
+  ;; (setq lsp-signature-auto-activate nil)
+
+  ;; comment to disable rustfmt on save
+  (setq rustic-format-on-save t)
+  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+(defun rk/rustic-mode-hook ()
+  ;; so that run C-c C-c C-r works without having to confirm, but don't try to
+  ;; save rust buffers that are not file visiting. Once
+  ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
+  ;; no longer be necessary.
+  (when buffer-file-name
+    (setq-local buffer-save-without-query t)))
 
 (load "server")
 (unless (server-running-p) (server-start))

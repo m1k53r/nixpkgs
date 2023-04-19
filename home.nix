@@ -4,6 +4,7 @@ let
   haskell-env = with pkgs.haskell.packages.ghc8107; [
     hoogle
   ];
+  python-env = with pkgs.python3Packages; [ pwntools ];
 in
 {
   # Home Manager needs a bit of information about you and the
@@ -18,8 +19,26 @@ in
   home.packages = with pkgs; [
     # LSP
     rnix-lsp
+    haskell-language-server
     python-language-server
     pyright
+    elixir_ls
+
+    # Languages
+    elixir
+    python3
+    nodejs-16_x
+    flutter
+    ocaml
+    rustc
+    
+    # Rust stuff
+    cargo
+    rust-analyzer
+
+    # Ocaml stuff
+    opam
+    dune_3
 
     # Haskell stuff
     cabal-install
@@ -41,19 +60,21 @@ in
     iosevka
     nerdfonts
     nerd-font-patcher
+    font-awesome
+    material-design-icons
+    weather-icons
+    emacs-all-the-icons-fonts
     
     # Other stuff
     chromium
     gnome3.gucharmap
     dconf
-    python3
     ctags
     ripgrep
     android-studio
     jdk
     android-tools
     file
-    nodejs-16_x
     fira-code-symbols
     xclip
     hlint
@@ -69,14 +90,26 @@ in
     nmap
     tdesktop
     spotifywm
-    flutter
     hover
     xmobar
     slock
     picom
     alacritty
     spotify
-  ] ++ haskell-env;
+    zsh
+    steam-run
+    docker-compose
+    imagemagick
+    inotify-tools
+    unzip
+    exercism
+    ngrok
+    obsidian
+    gef
+    gdb
+    docker
+    postgresql
+  ] ++ haskell-env ++ python-env;
 
   nixpkgs.config.allowUnfree = true;
 
@@ -93,18 +126,28 @@ in
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  programs.direnv.enable = true;
+  programs.direnv.nix-direnv.enable = true;
+
+  programs.bash.enable = true;
+  # OR
+  programs.zsh.enable = true;
+  # Or any other shell you're using
+
   imports = [
     (import ./tmux) 
     (import ./xmobar) 
     (import ./alacritty) 
     (import ./fish) 
-    (import ./nvim)
     (import ./git)
     (import ./emacs)
     (import ./code)
     (import ./rofi)
     (import ./bash)
     (import ./xmonad)
+    (import ./nvim)
     (import ./picom)
+    (import ./zsh)
+    (import ./wallpaper)
   ];
 }

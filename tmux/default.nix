@@ -7,5 +7,6 @@
     extraConfig = ''
     setw -g mode-keys vi
     '';
+    terminal = "alacritty";
   };
 }

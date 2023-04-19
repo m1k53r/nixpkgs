@@ -21,15 +21,18 @@ in {
     #'';
 
     extraPackages = epkgs: [
+      # Themes
+      epkgs."nord-theme"
+
       # Utils
       epkgs.evil
-      epkgs."darkburn-theme"
       epkgs.helm
       epkgs."use-package"
       epkgs."which-key"
       epkgs.company
       epkgs."all-the-icons"
       epkgs."all-the-icons-dired"
+      epkgs."treemacs-icons-dired"
       epkgs."ace-window"
       epkgs."ace-jump-mode"
       epkgs.sublimity
@@ -62,6 +65,9 @@ in {
       epkgs."python-mode"
       epkgs."web-mode"
       epkgs."dart-mode"
+      epkgs."elixir-mode"
+      epkgs."tuareg"
+      epkgs."rustic"
 
       # Dev tools
 
@@ -86,6 +92,7 @@ in {
       epkgs.shackle
       epkgs.popper
       epkgs."lsp-treemacs"
+      epkgs."elixir-yasnippets"
     ];
   };
   xdg.configFile."/home/mikolaj/.emacs.d/init.el".source = ./init.el;

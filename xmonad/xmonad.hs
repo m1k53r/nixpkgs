@@ -14,6 +14,7 @@ import XMonad.Hooks.StatusBar.PP
 import XMonad.Hooks.ManageHelpers 
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicProperty
+import XMonad.Hooks.WallpaperSetter
 
 import XMonad.Actions.SpawnOn
 
@@ -27,23 +28,28 @@ import XMonad.Layout.Tabbed
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Renamed
 
-foreground    = "#DCDCCC"
-foregroundAlt = "#656555"
-background    = "#3F3F3F"
-red           = "#CC9393"
-orange        = "#DFAF8F"
-yellow        = "#F0DFAF"
-green         = "#7F9F7F"
-cyan          = "#93E0E3"
-blue          = "#8CD0D3"
-magenta       = "#DC8CC3"
+background     = "#2E3440"
+backgroundAlt  = "#3B4252"
+backgroundAlt2 = "#4C566A"
+foreground     = "#D8DEE9"
+foregroundAlt  = "#E5E9F0"
+red            = "#CC9393"
+orange         = "#DFAF8F"
+yellow         = "#F0DFAF"
+green          = "#7F9F7F"
+cyan           = "#93E0E3"
+blue           = "#8CD0D3"
+magenta        = "#DC8CC3"
 
 main :: IO ()
 main = xmonad
        . ewmhFullscreen
        . ewmh
-       . withEasySB (statusBarProp "xmobar" (pure myXmobar)) defToggleStrutsKey
+       . withSB (xmobarMain <> xmobarSecond)
        $ myConfig
+
+xmobarMain = statusBarPropTo "_XMONAD_LOG_1" "xmobar -x 0 ~/.xmobarrc" (pure myXmobar)
+xmobarSecond = statusBarPropTo "_XMONAD_LOG_1" "xmobar -x 1 ~/.xmobarrc" (pure myXmobar)
 
 myXmobar :: PP
 myXmobar = def
@@ -53,13 +59,12 @@ myXmobar = def
     , ppHidden          = mywhite . wrap " " ""
     , ppHiddenNoWindows = mylowWhite . wrap " " ""
     , ppUrgent          = myred . wrap (myyellow "!") (myyellow "!")
-    , ppOrder           = \[ws, l, _, _, more] -> [ws, l, more]
-    , ppExtras          = [logTitles formatFocused formatUnfocused, test]
+    , ppOrder           = \[ws, l, _, _] -> [ws, l]
+    , ppExtras          = [logTitles formatFocused formatUnfocused]
     }
   where
     formatFocused   = wrap (mywhite    "[") (mywhite    "]") . mymagenta . ppWindow
     formatUnfocused = wrap (mylowWhite "[") (mylowWhite "]") . myblue    . ppWindow
-    test = logCmd "whoami"
 
     -- | Windows should have *some* title, which should not not exceed a
     -- sane length.
@@ -75,25 +80,26 @@ myXmobar = def
     mylowWhite = xmobarColor foregroundAlt ""
 
 myTabbedTheme = def
-  { activeColor         = background
-  , inactiveColor       = background
-  , urgentColor         = background
-  , activeBorderColor   = foreground
-  , inactiveBorderColor = background
-  , urgentBorderColor   = background
+  { activeColor         = backgroundAlt 
+  , inactiveColor       = backgroundAlt2
+  , urgentColor         = backgroundAlt
+  , activeBorderColor   = backgroundAlt
+  , inactiveBorderColor = backgroundAlt2
+  , urgentBorderColor   = backgroundAlt
   , activeTextColor     = foreground
   , inactiveTextColor   = foregroundAlt
   , urgentTextColor     = red
+  , fontName            = "xft:JetBrainsMono Nerd Font:size=8"
   }
 
 myLayout = tiled ||| Mirror tiled ||| tab ||| fullSpace ||| full ||| threeCol
   where
-    space     = spacing 40
-    threeCol  = renamed [Replace "3Col"] $ space $ magnifiercz' 1.3 $ ThreeColMid nmaster delta ratio
+    space     = spacing 20
+    threeCol  = renamed [Replace "3Col"] . space . magnifiercz' 1.3 $ ThreeColMid nmaster delta ratio
     tiled     = space $ Tall nmaster delta ratio
     full      = noBorders Full
     fullSpace = space full
-    tab       = renamed [Replace "Tabbed"] $ noBorders $ tabbed shrinkText myTabbedTheme
+    tab       = renamed [Replace "Tabbed"] . noBorders $ tabbed shrinkText myTabbedTheme
     nmaster   = 1
     ratio     = 1/2
     delta     = 3/100
@@ -104,7 +110,11 @@ myHandleEventHook = dynamicPropertyChange "WM_NAME" $ composeAll
   , title =? "Android Emulator - Pixel_5_API_Tiramisu:5554" --> doFloat
   ]
 
-myWorkspaces = ["1:code", "2:web", "3:spotify", "4:messages", "5:utils"]
+myWorkspaces = [ "<fn=3>\xe86f</fn>"
+               , "<fn=3>\xe80b</fn>"
+               , "<fn=3>\xe405</fn>"
+               , "<fn=3>\xe158</fn>"
+               , "<fn=3>\xe8b8</fn>"]
 
 myManageHook :: ManageHook
 myManageHook = composeAll
@@ -119,12 +129,13 @@ myManageHook = composeAll
   ]
 
 myConfig = def
-    { modMask         = mod4Mask
-    , layoutHook      = lessBorders OnlyFloat $ avoidStruts myLayout
-    , terminal        = "alacritty"
-    , manageHook      = myManageHook
-    , handleEventHook = myHandleEventHook
-    , workspaces      = myWorkspaces
+    { modMask            = mod4Mask
+    , layoutHook         = lessBorders OnlyFloat $ avoidStruts myLayout
+    , terminal           = "alacritty"
+    , manageHook         = myManageHook
+    , handleEventHook    = myHandleEventHook
+    , workspaces         = myWorkspaces
+    , focusedBorderColor = foreground
     }
     `additionalKeysP`
     [ ("M-S-z", spawn "xscreensaver-command -lock")
